@@ -17,4 +17,4 @@ This RAG performs the following operation:
 
 ### RAG trained on Coding Interviews content
 
-![Graph](./media/coding-rag.svg)
+![Graph](./media/coding-rag.png)
