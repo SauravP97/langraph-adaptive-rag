@@ -33,15 +33,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const http = __importStar(require("http"));
-const adaptive_rag_1 = require("./adaptive-rag/adaptive_rag");
 const dotenv = __importStar(require("dotenv"));
+const coding_interview_rag_1 = require("./coding-interview-prep-rag/coding_interview-rag");
 dotenv.config();
 const server = http.createServer((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Run the RAG!
-    yield (0, adaptive_rag_1.adaptiveRag)();
+    const graphState = yield (0, coding_interview_rag_1.execute)();
     console.log("Graph Ended!");
     res.statusCode = 200;
     res.setHeader('Content-Type', "text/plain");
-    res.end("Graph Ran");
+    res.end(`
+        Your question: ${graphState.question}
+        \n\n
+        Model answered: ${graphState.generatedAnswer}
+        `);
 }));
 server.listen(3000);

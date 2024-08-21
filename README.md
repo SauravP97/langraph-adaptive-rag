@@ -1,4 +1,6 @@
-## Adaptive RAG
+## Adaptive RAGs
+
+### RAG trained on LLM and Prompt Engineering content
 
 ![Graph](./media/graph.png)
 
@@ -12,3 +14,7 @@ This RAG performs the following operation:
 - If the document is relevant then ask model to generate answers for the question using the given context document.
 - If the document is irrelevant, transform the question to get a better question/query and then re-grade the document with the updated question.
 - Once the answer is generated, check the model for Hallucination and check how relevant the answer is to the question.
+
+### RAG trained on Coding Interviews content
+
+![Graph](./media/coding-rag.svg)
