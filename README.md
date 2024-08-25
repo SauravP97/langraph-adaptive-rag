@@ -2,7 +2,7 @@
 
 ### 1. RAG trained on LLM and Prompt Engineering content
 
-<img src="./media/graph.png" width="200">
+<img src="./media/graph.png" width="500">
 
 This RAG performs the following operation:
 
