@@ -34,7 +34,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const http = __importStar(require("http"));
 const dotenv = __importStar(require("dotenv"));
-const rag_1 = require("./basic-rag/rag");
+const dsrag_1 = require("./distributed-systems-rag/dsrag");
 dotenv.config();
 const server = http.createServer((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Run the RAG!
@@ -48,8 +48,11 @@ const server = http.createServer((req, res) => __awaiter(void 0, void 0, void 0,
     //     \n\n
     //     Model answered: ${graphState.generatedAnswer}
     //     `);
-    const content = yield (0, rag_1.buildVectorStore)();
+    const response = yield (0, dsrag_1.invokeRag)();
     res.setHeader('Content-Type', "text/plain");
-    res.end(content);
+    res.end(`
+        Question: ${response.question} \n\n
+        Answer generated: ${response.generatedAnswer}
+    `);
 }));
 server.listen(3000);

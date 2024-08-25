@@ -60,7 +60,7 @@ function buildVectorStore() {
         const vectorStore = yield memory_1.MemoryVectorStore.fromDocuments(splitDocs, new hf_transformers_1.HuggingFaceTransformersEmbeddings({
             model: "Xenova/all-MiniLM-L6-v2",
         }));
-        const question = "How are data stored in memory in LSM Trees?";
+        const question = "Who wrote these articles";
         const retiever = vectorStore.asRetriever();
         const reteieved_docs = yield retiever.invoke(question);
         // Creating a model.
