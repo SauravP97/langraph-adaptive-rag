@@ -19,4 +19,4 @@ This RAG performs the following operation:
  
 ### 2. RAG trained on Coding Interviews content
 
-![Graph](./media/coding-rag.png)
+<img src="./media/coding-rag.png" width="500">
