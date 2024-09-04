@@ -37,21 +37,11 @@ const dotenv = __importStar(require("dotenv"));
 const dsrag_1 = require("./distributed-systems-rag/dsrag");
 dotenv.config();
 const server = http.createServer((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // Run the RAG!
-    //const graphState = await execute();
-    // console.log("Graph Ended!");
-    // res.statusCode = 200;
-    // res.setHeader('Content-Type', "text/plain");
-    // res.end(
-    //     `
-    //     Your question: ${graphState.question}
-    //     \n\n
-    //     Model answered: ${graphState.generatedAnswer}
-    //     `);
     const response = yield (0, dsrag_1.invokeRag)();
     res.setHeader('Content-Type', "text/plain");
     res.end(`
-        Question: ${response.question} \n\n
+        Question Asked: ${response.question}
+        \n \n
         Answer generated: ${response.generatedAnswer}
     `);
 }));
