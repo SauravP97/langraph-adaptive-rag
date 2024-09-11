@@ -6,6 +6,22 @@ import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { OpenAI } from "@langchain/openai";
 import * as hub from "langchain/hub";
 import {StringOutputParser} from "@langchain/core/output_parsers";
+import {ChatPromptTemplate} from "@langchain/core/prompts";
+import * as constants from "../adaptive-rag/constants";
+import type {Document} from "@langchain/core/documents";
+
+async function hallucinationGrader(model: OpenAI, documents: Document[], generatedAnswer: string) {
+    const hallucinationGraderPrompt = ChatPromptTemplate.fromTemplate(
+        constants.HALLUCINATION_GRADER_TEMPLATE,
+    );
+    const hallucinationGrader = 
+        await hallucinationGraderPrompt.pipe(model);
+
+    return await hallucinationGrader.invoke({
+        context: util.formatDocs(documents),
+        generation: generatedAnswer, 
+    });
+}
 
 async function buildVectorStore() {
     const urls = [
@@ -32,7 +48,7 @@ async function buildVectorStore() {
         })
     );
 
-    const question = "Who wrote these articles";
+    const question = "Where's TAJ Mahal located?";
     const retiever = vectorStore.asRetriever();
     const reteieved_docs = await retiever.invoke(question);
 
@@ -45,11 +61,16 @@ async function buildVectorStore() {
     const ragChain = 
         ragPrompt.pipe(model).pipe(new StringOutputParser);
     
-    const generatedAnswer = await ragChain.invoke({
+    let generatedAnswer = await ragChain.invoke({
         context: util.formatDocs(reteieved_docs),
         question: question,
     });
     
+    const hallucinated = 
+        await hallucinationGrader(model, reteieved_docs, generatedAnswer);
+    
+    console.log("Answer supported by the set of facts? " + hallucinated);
+
     return generatedAnswer;
 }
 

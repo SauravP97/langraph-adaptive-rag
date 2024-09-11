@@ -41,6 +41,18 @@ const memory_1 = require("langchain/vectorstores/memory");
 const openai_1 = require("@langchain/openai");
 const hub = __importStar(require("langchain/hub"));
 const output_parsers_1 = require("@langchain/core/output_parsers");
+const prompts_1 = require("@langchain/core/prompts");
+const constants = __importStar(require("../adaptive-rag/constants"));
+function hallucinationGrader(model, documents, generatedAnswer) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const hallucinationGraderPrompt = prompts_1.ChatPromptTemplate.fromTemplate(constants.HALLUCINATION_GRADER_TEMPLATE);
+        const hallucinationGrader = yield hallucinationGraderPrompt.pipe(model);
+        return yield hallucinationGrader.invoke({
+            context: util.formatDocs(documents),
+            generation: generatedAnswer,
+        });
+    });
+}
 function buildVectorStore() {
     return __awaiter(this, void 0, void 0, function* () {
         const urls = [
@@ -60,7 +72,7 @@ function buildVectorStore() {
         const vectorStore = yield memory_1.MemoryVectorStore.fromDocuments(splitDocs, new hf_transformers_1.HuggingFaceTransformersEmbeddings({
             model: "Xenova/all-MiniLM-L6-v2",
         }));
-        const question = "Who wrote these articles";
+        const question = "Where's TAJ Mahal located?";
         const retiever = vectorStore.asRetriever();
         const reteieved_docs = yield retiever.invoke(question);
         // Creating a model.
@@ -69,10 +81,12 @@ function buildVectorStore() {
         });
         const ragPrompt = yield hub.pull('rlm/rag-prompt');
         const ragChain = ragPrompt.pipe(model).pipe(new output_parsers_1.StringOutputParser);
-        const generatedAnswer = yield ragChain.invoke({
+        let generatedAnswer = yield ragChain.invoke({
             context: util.formatDocs(reteieved_docs),
             question: question,
         });
+        const hallucinated = yield hallucinationGrader(model, reteieved_docs, generatedAnswer);
+        console.log("Answer supported by the set of facts? " + hallucinated);
         return generatedAnswer;
     });
 }
